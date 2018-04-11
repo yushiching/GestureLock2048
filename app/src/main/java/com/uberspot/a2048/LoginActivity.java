@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import pipi.win.a2048.activity.LockScreenActivity;
+import pipi.win.a2048.utility.LogUtil;
 
 /**
  * A login screen that offers login via name/age.
@@ -75,6 +76,9 @@ public class LoginActivity extends Activity {
         mUserNameView = (EditText) findViewById(R.id.username);
         mAgeView = (EditText) findViewById(R.id.age);
 
+
+        SensorService.startService(this);
+
         /* Added by Xiaopeng. Check the availability of external storage. */
         boolean isExternalStorageAvailable = isExternalStorageWritable();
         if (isExternalStorageAvailable) {
@@ -87,7 +91,9 @@ public class LoginActivity extends Activity {
 
             String touchFileName = getUniqueID() + formatter.format(now) + "Touch.csv";
             mTouchFilePath = touchBaseDir + File.separator + touchFileName;
+            LogUtil.i(mTouchFilePath);
             String sensorFileName = getUniqueID() + formatter.format(now) + "Sensor.csv";
+            LogUtil.i(sensorFileName);
             mSensorFilePath = sensorsBaseDir + File.separator + sensorFileName;
         } else {
             Log.e("error msg", "External storage is not available");
@@ -106,6 +112,12 @@ public class LoginActivity extends Activity {
         mProgressView = findViewById(R.id.login_progress);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(getApplicationContext(),SensorService.class));
+        super.onDestroy();
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -185,10 +197,10 @@ public class LoginActivity extends Activity {
             mAuthTask = new UserLoginTask(username, age);
             mAuthTask.execute((Void) null);
             //Log.i("FLAG", "Login successful" + " ");
-            //Intent pinIntent = new Intent(this, PinEntryView.class);
+            Intent pinIntent = new Intent(this, PinEntryView.class);
 
-            //startActivity(pinIntent);
-            startActivity(new Intent(this, LockScreenActivity.class));
+            startActivity(pinIntent);
+            //startActivity(new Intent(this, LockScreenActivity.class));
         }
     }
 

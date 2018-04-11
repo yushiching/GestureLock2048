@@ -30,6 +30,9 @@ public class LockScreenActivity extends BaseActivity {
         RxPatternLockView.patternChanges(mPatternLockView)
                 .subscribe(new PatternConsumer());
 
+        mPatternLockView.setTactileFeedbackEnabled(false);//close vibration
+
+
 
 
     }

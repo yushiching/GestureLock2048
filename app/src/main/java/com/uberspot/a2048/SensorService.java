@@ -1,6 +1,7 @@
 package com.uberspot.a2048;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -33,6 +34,12 @@ public class SensorService extends Service implements SensorEventListener {
     private long gyroLastTimestamp = 0;
     private long magLastTimestamp = 0;
     //private long lightLastTimestamp = 0;
+
+
+
+    public static void startService(Context context){
+        context.startService(new Intent( context, SensorService.class));
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
