@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="patterns_check_list">
+        <item>0124876</item>
+        <item>2103678</item>
+        <item>01258763</item>
+        <item>6304852</item>
+        <item>210345876</item>
+        <item>6304258</item>
+        <item>01246785</item>
+
+
+    </string-array>
+
+</resources>

@@ -15,7 +15,7 @@
         android:layout_width="@dimen/lock_screen_input_zone_size"
         android:layout_height="@dimen/lock_screen_input_zone_size"
         android:layout_marginBottom="64dp"
-        android:background="#33ffffff"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -52,12 +52,11 @@
             android:layout_height="@dimen/lock_screen_show_zone_size"
             app:correctStateColor="@color/colorPrimary" />
 
-        <ImageView
+        <pipi.win.a2048.view.CorrectHintImageView
             android:id="@+id/pattern_lock_inputzone_checkres"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:alpha="0"
             android:scaleType="fitCenter"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_done_black_24dp" />

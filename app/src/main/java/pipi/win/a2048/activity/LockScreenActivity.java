@@ -7,24 +7,25 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.andrognito.rxpatternlockview.RxPatternLockView;
 import com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent;
+import com.uberspot.a2048.MainActivity;
 import com.uberspot.a2048.R;
 import com.uberspot.a2048.SensorService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 import pipi.win.a2048.activity.base.BaseActivity;
+import pipi.win.a2048.view.CorrectHintImageView;
 
 import static com.andrognito.patternlockview.PatternLockView.PatternViewMode;
 import static com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent.EventType;
@@ -40,9 +41,13 @@ public class LockScreenActivity extends BaseActivity {
     @BindView(R.id.tv_title_screenlock)
     TextView tvTitleScreenlock;
     @BindView(R.id.pattern_lock_view_display)
-    PatternLockView patternLockViewDisplay;
+    PatternLockView patternLockViewIndicator;
     @BindView(R.id.pattern_lock_inputzone_checkres)
-    ImageView patternLockInputzoneCheckres;
+    CorrectHintImageView patternInputCheckResIndicator;
+
+
+    private List<String> mPatternToShow = new ArrayList<>();
+    private int currentPattern;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LockScreenActivity.class));
@@ -54,6 +59,19 @@ public class LockScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_lock_screen);
         ButterKnife.bind(this);
 
+        initData();
+        initUI();
+
+        SensorService.startService(this);
+
+    }
+
+    protected void initData(){
+        String[] checkarrays=getResources().getStringArray(R.array.patterns_check_list);
+        addPatternsToShow(Arrays.asList(checkarrays));
+    }
+    protected void initUI(){
+        patternInputCheckResIndicator.setImageAlpha(0);
         mPatternLockView.setTactileFeedbackEnabled(false);//close vibration
         RxPatternLockView.patternChanges(mPatternLockView)
                 .subscribe(new PatternConsumer());
@@ -61,14 +79,20 @@ public class LockScreenActivity extends BaseActivity {
         //mLockScreenConstrainLayout.setOnTouchListener(new LockScreenTouchEvent());
 
 
-        patternLockViewDisplay.setInputEnabled(false);
-        patternLockViewDisplay.setEnabled(false);
-        List<PatternLockView.Dot> dots = PatternLockUtils.stringToPattern(patternLockViewDisplay,
-                DUMMY_TEST_PATTERN);
-        patternLockViewDisplay.setPattern(PatternViewMode.CORRECT, dots);
-        SensorService.startService(this);
-
+        patternLockViewIndicator.setInputEnabled(false);
+        patternLockViewIndicator.setEnabled(false);
+        currentPattern = 0;
+        String initPattern = mPatternToShow.size() > 0 ? mPatternToShow.get(currentPattern) : DUMMY_TEST_PATTERN;
+        setPatternIndictor(initPattern);
     }
+
+
+
+    protected void setPatternIndictor(String s){
+        List<PatternLockView.Dot> dots = PatternLockUtils.stringToPattern(patternLockViewIndicator,s);
+        patternLockViewIndicator.setPattern(PatternViewMode.CORRECT, dots);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -83,64 +107,58 @@ public class LockScreenActivity extends BaseActivity {
             switch (tid) {
                 case EventType.PATTERN_STARTED:
                     logi("Pattern drawing started");
-                    patternLockInputzoneCheckres.setImageAlpha(0);
-
-                    break;
-                case EventType.PATTERN_PROGRESS:
-
+                    patternInputCheckResIndicator.setImageAlpha(0);
                     break;
                 case EventType.PATTERN_COMPLETE:
-                    logi("Pattern complete: " +
-                            PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
-                    mPatternLockView.clearPattern();
-                    patternLockInputzoneCheckres.setImageAlpha(255);
-                    setHideAnimation(patternLockInputzoneCheckres, 1400);
 
+                    String userInputPattern = PatternLockUtils.patternToString(mPatternLockView, event.getPattern());
+                    logi("Pattern complete: " + userInputPattern);
+                    checkUserInputPattern(userInputPattern);
 
-                    break;
-                case EventType.PATTERN_CLEARED:
-                    logi("Pattern has been cleared");
                     break;
             }
         }
     }
 
 
-
-    private AlphaAnimation mHideAnimation;
-    private AlphaAnimation mShowAnimation;
-
-    /**
-     * View渐隐动画效果
-     */
-    private void setHideAnimation(View view, int duration) {
-        if (null == view || duration < 0) {
+    protected void checkUserInputPattern(String userInput) {
+        if(mPatternToShow.size()==0){
+            loge(new ArrayIndexOutOfBoundsException(),"CheckList is Empty!");
             return;
         }
-        if (null != mHideAnimation) {
-            mHideAnimation.cancel();
+        final String correct=mPatternToShow.get(currentPattern).trim();
+        String reversedUserInput=new StringBuilder(userInput).reverse().toString();
+        if (correct.equalsIgnoreCase(userInput) || correct.equalsIgnoreCase(reversedUserInput)) {
+            //show correct;
+
+            int leftpattern=mPatternToShow.size()-currentPattern-1;
+
+            if (currentPattern == mPatternToShow.size() - 1) {
+                MainActivity.startActivity(this);
+                patternInputCheckResIndicator.showAllOverAni(1200);
+                finish();
+                return;
+            }else {
+                currentPattern++;
+                setPatternIndictor(mPatternToShow.get(currentPattern));
+                patternInputCheckResIndicator.showCorrectAni(1200);
+                mkToast("Correct!" +leftpattern+" more");
+            }
+
+        } else {
+            //show error;
+            patternInputCheckResIndicator.showWrongAni(1700);
+            mkToast("Error~");
         }
-        mHideAnimation = new AlphaAnimation(1.0f, 0.0f);
-        mHideAnimation.setDuration(duration);
-        mHideAnimation.setFillAfter(true);
-        view.startAnimation(mHideAnimation);
+        mPatternLockView.clearPattern();
     }
 
-    /**
-     * View渐现动画效果
-     */
-    private void setShowAnimation(View view, int duration) {
-        if (null == view || duration < 0) {
-            return;
-        }
-        if (null != mShowAnimation) {
-            mShowAnimation.cancel();
-        }
-        mShowAnimation = new AlphaAnimation(0.0f, 1.0f);
-        mShowAnimation.setDuration(duration);
-        mShowAnimation.setFillAfter(true);
-        view.startAnimation(mShowAnimation);
+
+    public void addPatternsToShow(List<String> list) {
+        mPatternToShow.clear();
+        mPatternToShow.addAll(list);
     }
+
 
     protected class LockScreenTouchEvent implements View.OnTouchListener {
 
@@ -182,7 +200,6 @@ public class LockScreenActivity extends BaseActivity {
                     data[1] = Long.toString(event.getEventTime());
                     data[2] = "2"; //2 denotes action type "ACTION_UP"
                     data[3] = Float.toString(getResources().getConfiguration().orientation);
-                    ;
                     data[4] = Float.toString(event.getOrientation(0));
                     data[5] = Float.toString(event.getX(0));
                     data[6] = Float.toString(event.getY(0));
@@ -199,7 +216,7 @@ public class LockScreenActivity extends BaseActivity {
             /* End. Detect touch gestures using onTouchEvent and collect touch data. */
 
             // return so that the event isn't consumed but used
-            // by the webview as well
+            // by the view as well
             return false;
         }
     }
