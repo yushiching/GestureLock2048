@@ -3,6 +3,7 @@ package com.uberspot.a2048;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -58,6 +59,12 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     private long mLastTouch;
     private static final long mTouchThreshold = 2000;
     private Toast pressBackToast;
+
+
+
+    public static void startActivity(Context context){
+        context.startActivity(new Intent(context, MainActivity.class));
+    }
 
     @SuppressLint({"SetJavaScriptEnabled", "NewApi", "ShowToast"})
     @Override

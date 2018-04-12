@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import pipi.win.a2048.activity.LockScreenActivity;
 import pipi.win.a2048.utility.LogUtil;
 
 /**
@@ -39,7 +38,7 @@ import pipi.win.a2048.utility.LogUtil;
  */
 public class LoginActivity extends Activity {
 
-    /**
+    /*
      * Id to identity READ_CONTACTS permission request.
      */
     //private static final int REQUEST_READ_CONTACTS = 0;
@@ -115,7 +114,7 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(getApplicationContext(),SensorService.class));
+        SensorService.stopService(this);
         super.onDestroy();
     }
 
@@ -197,7 +196,7 @@ public class LoginActivity extends Activity {
             mAuthTask = new UserLoginTask(username, age);
             mAuthTask.execute((Void) null);
             //Log.i("FLAG", "Login successful" + " ");
-            Intent pinIntent = new Intent(this, PinEntryView.class);
+            Intent pinIntent = new Intent(this, PinEntryActivity.class);
 
             startActivity(pinIntent);
             //startActivity(new Intent(this, LockScreenActivity.class));

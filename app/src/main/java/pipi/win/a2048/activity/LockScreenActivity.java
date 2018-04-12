@@ -1,5 +1,7 @@
 package pipi.win.a2048.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -7,7 +9,9 @@ import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.andrognito.rxpatternlockview.RxPatternLockView;
 import com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent;
+import com.uberspot.a2048.MainActivity;
 import com.uberspot.a2048.R;
+import com.uberspot.a2048.SensorService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +25,10 @@ public class LockScreenActivity extends BaseActivity {
     @BindView(R.id.pattern_lock_view)
     PatternLockView mPatternLockView;
 
+    public static void startActivity(Context context){
+        context.startActivity(new Intent(context, LockScreenActivity.class));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +39,16 @@ public class LockScreenActivity extends BaseActivity {
                 .subscribe(new PatternConsumer());
 
         mPatternLockView.setTactileFeedbackEnabled(false);//close vibration
-
-
-
+        SensorService.startService(this);
 
     }
 
+    @Override
+    protected void onDestroy() {
+
+        SensorService.stopService(this);
+        super.onDestroy();
+    }
 
     protected class PatternConsumer implements Consumer<PatternLockCompoundEvent>{
         @Override
@@ -54,6 +66,8 @@ public class LockScreenActivity extends BaseActivity {
                     logi("Pattern complete: " +
                             PatternLockUtils.patternToString(mPatternLockView, event.getPattern()));
                     mPatternLockView.clearPattern();
+                    MainActivity.startActivity(LockScreenActivity.this);
+                    finish();
 
                     break;
                 case EventType.PATTERN_CLEARED:

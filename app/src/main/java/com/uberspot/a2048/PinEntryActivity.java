@@ -31,8 +31,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import pipi.win.a2048.activity.LockScreenActivity;
 
-public class PinEntryView extends Activity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+
+public class PinEntryActivity extends Activity
+        implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
     /* Added by Xiaopeng. Declare some variables for listening touch events. */
     private GestureDetectorCompat mDetector;
     private VelocityTracker mVelocityTracker = null;
@@ -349,9 +352,8 @@ public class PinEntryView extends Activity implements GestureDetector.OnGestureL
         mVelocityTracker.recycle();
 
         // Finished the PIN activity. Move to next activity (a game intent)
-        Intent gameIntent = new Intent(appContext, MainActivity.class);
-        startActivity(gameIntent);
-        //finish();
+        LockScreenActivity.startActivity(this);
+        finish();
     }
 
     @Override

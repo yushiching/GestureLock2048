@@ -18,6 +18,7 @@ import com.opencsv.CSVWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -39,6 +40,9 @@ public class SensorService extends Service implements SensorEventListener {
 
     public static void startService(Context context){
         context.startService(new Intent( context, SensorService.class));
+    }
+    public static void stopService(Context context){
+        context.stopService(new Intent(context, SensorService.class));
     }
 
     @Override
@@ -193,7 +197,7 @@ public class SensorService extends Service implements SensorEventListener {
     }
 
     /* Write an array list of strings to a specific path */
-    public static void writeToFile(CSVWriter writer, String path, ArrayList<String[]> data) {
+    public static void writeToFile(CSVWriter writer, String path, List<String[]> data) {
         try {
             writer = new CSVWriter(new FileWriter(path, true));
         } catch (IOException e) {
