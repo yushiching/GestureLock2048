@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import pipi.win.a2048.activity.LockScreenActivity;
 import pipi.win.a2048.utility.LogUtil;
 
 /**
@@ -196,10 +197,8 @@ public class LoginActivity extends Activity {
             mAuthTask = new UserLoginTask(username, age);
             mAuthTask.execute((Void) null);
             //Log.i("FLAG", "Login successful" + " ");
-            Intent pinIntent = new Intent(this, PinEntryActivity.class);
-
-            startActivity(pinIntent);
-            //startActivity(new Intent(this, LockScreenActivity.class));
+            //PinEntryActivity.startActivity(this);
+             LockScreenActivity.startActivity(this);
         }
     }
 

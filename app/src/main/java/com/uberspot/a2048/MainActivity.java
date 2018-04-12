@@ -39,7 +39,8 @@ import java.util.Locale;
 
 import de.cketti.library.changelog.ChangeLog;
 
-public class MainActivity extends Activity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public class MainActivity extends Activity implements GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
     /* Added by Xiaopeng. Declare some variables. */
     private static final String DEBUG_TAG = "Add_Touch_Sensors";
     private static final String LOG_TAG = "Log";
@@ -209,6 +210,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     @Override
     public boolean onDown(MotionEvent event) {
         long currentTime = System.currentTimeMillis();
+        Log.i("MainActivity", "onDown: "+currentTime);
 
         if (mVelocityTracker == null) {
             // Retrieve a new VelocityTracker object to watch the velocity of a motion.

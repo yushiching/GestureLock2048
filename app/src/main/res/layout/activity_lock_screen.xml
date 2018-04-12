@@ -2,37 +2,72 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lock_screen_constrain_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-
+    android:background="@drawable/image_background"
     tools:context="pipi.win.a2048.activity.LockScreenActivity">
+
 
     <com.andrognito.patternlockview.PatternLockView
         android:id="@+id/pattern_lock_view"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:layout_marginBottom="60dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@color/gray"
-        android:visibility="visible"
+        android:layout_width="@dimen/lock_screen_input_zone_size"
+        android:layout_height="@dimen/lock_screen_input_zone_size"
+        android:layout_marginBottom="64dp"
+        android:background="#33ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_title_screenlock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="手势解锁"
         android:textAlignment="center"
-        android:textSize="24sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:orientation="vertical"
+
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_title_screenlock">
+
+        <com.andrognito.patternlockview.PatternLockView
+
+            android:id="@+id/pattern_lock_view_display"
+            android:layout_width="@dimen/lock_screen_show_zone_size"
+            android:layout_height="@dimen/lock_screen_show_zone_size"
+            app:correctStateColor="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/pattern_lock_inputzone_checkres"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:alpha="0"
+            android:scaleType="fitCenter"
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_done_black_24dp" />
+    </LinearLayout>
+
+
+
+
 </android.support.constraint.ConstraintLayout>
+
+    <!--
+transparent: https://www.jianshu.com/p/be6aecb02701
+-->

@@ -74,6 +74,11 @@ public class PinEntryActivity extends Activity
 
     MediaPlayer mp = null;
 
+    public static void startActivity(Context context){
+        context.startActivity(new Intent(context, PinEntryActivity.class));
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

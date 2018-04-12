@@ -48,6 +48,7 @@
 
         <activity android:name="pipi.win.a2048.activity.LockScreenActivity"
             android:theme="@style/AppThemeCompat"
+            android:screenOrientation="portrait"
             >
 
 
