@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.GestureDetectorCompat;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,6 +16,8 @@ import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.andrognito.rxpatternlockview.RxPatternLockView;
 import com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent;
+import com.opencsv.CSVWriter;
+import com.uberspot.a2048.LoginActivity;
 import com.uberspot.a2048.MainActivity;
 import com.uberspot.a2048.R;
 import com.uberspot.a2048.SensorService;
@@ -58,26 +63,47 @@ public class LockScreenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_screen);
         ButterKnife.bind(this);
-
         initData();
         initUI();
 
-        SensorService.startService(this);
 
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+
+        SensorService.stopService(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+
+        SensorService.startService(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void loge(Throwable e, String msg) {
+        super.loge(e, msg);
     }
 
     protected void initData(){
         String[] checkarrays=getResources().getStringArray(R.array.patterns_check_list);
         addPatternsToShow(Arrays.asList(checkarrays));
     }
+
     protected void initUI(){
         patternInputCheckResIndicator.setImageAlpha(0);
         mPatternLockView.setTactileFeedbackEnabled(false);//close vibration
         RxPatternLockView.patternChanges(mPatternLockView)
                 .subscribe(new PatternConsumer());
 
-        //mLockScreenConstrainLayout.setOnTouchListener(new LockScreenTouchEvent());
-
+        mLockScreenConstrainLayout.setOnTouchListener(new LockScreenTouchEvent());
 
         patternLockViewIndicator.setInputEnabled(false);
         patternLockViewIndicator.setEnabled(false);
@@ -94,11 +120,7 @@ public class LockScreenActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        SensorService.stopService(this);
-        super.onDestroy();
-    }
+
 
     protected class PatternConsumer implements Consumer<PatternLockCompoundEvent> {
         @Override
@@ -160,11 +182,26 @@ public class LockScreenActivity extends BaseActivity {
     }
 
 
-    protected class LockScreenTouchEvent implements View.OnTouchListener {
+
+
+
+
+
+
+    public class LockScreenTouchEvent implements View.OnTouchListener ,GestureDetector.OnGestureListener,
+            GestureDetector.OnDoubleTapListener {
 
         private long mLastTouch = 0;
         private long mTouchThreshold = 2000;
         private GestureDetectorCompat mDetector;
+        private VelocityTracker mVelocityTracker;
+        private ArrayList<String[]> mTouchData = new ArrayList<>();
+
+        public LockScreenTouchEvent() {
+            mDetector=new GestureDetectorCompat(LockScreenActivity.this,
+                    LockScreenTouchEvent.this);
+
+        }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -185,11 +222,8 @@ public class LockScreenActivity extends BaseActivity {
 
             int action = event.getActionMasked();
 
+            logi("OnDown "+action);
             switch (action) {
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    break;
-                case MotionEvent.ACTION_POINTER_UP:
-                    break;
                 case MotionEvent.ACTION_UP:
                     // Get the index of the pointer associated with the action.
                     int eventIndex = event.getActionIndex();
@@ -207,10 +241,19 @@ public class LockScreenActivity extends BaseActivity {
                     data[8] = Float.toString(event.getSize(0));
                     data[11] = Long.toString(id);
                     data[12] = Long.toString(currentTime);
+                    mTouchData.add(data);
+
+                    CSVWriter writer = null;
+                    MainActivity.writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+                    mTouchData.clear();
+                    mVelocityTracker.clear();
                     break;
 
                 case MotionEvent.ACTION_CANCEL:
 
+                    mTouchData.clear();
+                    mVelocityTracker.recycle();
+                    mVelocityTracker = null;
                     break;
             }
             /* End. Detect touch gestures using onTouchEvent and collect touch data. */
@@ -218,6 +261,121 @@ public class LockScreenActivity extends BaseActivity {
             // return so that the event isn't consumed but used
             // by the view as well
             return false;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            long currentTime = System.currentTimeMillis();
+            Log.i(this.getClass().getSimpleName(), "onDown: "+currentTime);
+
+            if (mVelocityTracker == null) {
+                // Retrieve a new VelocityTracker object to watch the velocity of a motion.
+                mVelocityTracker = VelocityTracker.obtain();
+            } else {
+                // Reset the velocity tracker back to its initial state.
+                mVelocityTracker.clear();
+            }
+            // Add a user's movement to the tracker.
+            mVelocityTracker.addMovement(event);
+
+            //Log.d(DEBUG_TAG, "onDown: " + event.toString());
+            //Log.d(DEBUG_TAG, "onDown pressure: " + event.getPressure(0));
+            int id = event.getPointerId(0);
+            String[] data = new String[13];
+            // data[0] is reserved for later use
+            data[1] = Long.toString(event.getEventTime());
+            data[2] = "0"; //0 denotes action type "ACTION_DOWN"
+            data[3] = Float.toString(getResources().getConfiguration().orientation);;
+            data[4] = Float.toString(event.getOrientation(0));
+            data[5] = Float.toString(event.getX(0));
+            data[6] = Float.toString(event.getY(0));
+            data[7] = Float.toString(event.getPressure(0));
+            data[8] = Float.toString(event.getSize(0));
+            data[11] = Long.toString(id);
+            data[12] = Long.toString(currentTime);
+            mTouchData.add(data);
+
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return true;
+        }
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                                float distanceY) {
+            //Log.d(DEBUG_TAG, "onScroll: " + e1.toString() + e2.toString());
+            mVelocityTracker.addMovement(e2);
+            // When you want to determine the velocity, call
+            // computeCurrentVelocity(). Then call getXVelocity()
+            // and getYVelocity() to retrieve the velocity for each pointer ID.
+            mVelocityTracker.computeCurrentVelocity(1000);
+
+            //int actionIndex = e2.getActionIndex();
+            final int historySize = e2.getHistorySize();
+            for (int index = 0; index < e2.getPointerCount(); index++) {
+                int id = e2.getPointerId(index);
+                for (int h = 0; h < (historySize-1); h++) {
+                    String[] data = new String[12];
+                    // data[0] is reserved for later use
+                    data[1] = Long.toString(e2.getHistoricalEventTime(h));
+                    data[2] = "1";  //1 denotes action type "ACTION_MOVE"
+                    data[3] = Float.toString(getResources().getConfiguration().orientation);;
+                    data[4] = Float.toString(e2.getHistoricalOrientation(index, h));
+                    data[5] = Float.toString(e2.getHistoricalX(index, h));
+                    data[6] = Float.toString(e2.getHistoricalY(index, h));
+                    data[7] = Float.toString(e2.getHistoricalPressure(index, h));
+                    data[8] = Float.toString(e2.getHistoricalSize(index, h));
+                    data[11] = Long.toString(id);
+                    mTouchData.add(data);
+                    //Log.d(DEBUG_TAG, "id:" + id + " " + "onScroll History X: " + e2.getHistoricalX(index, h));
+                    //Log.d(DEBUG_TAG, "id:" + id + " " + "onScroll History Y: " + e2.getHistoricalY(index, h));
+                }
+                String[] data = new String[12];
+                // data[0] is reserved for later use
+                data[1] = Long.toString(e2.getEventTime());
+                data[2] = "1";  //1 denotes action type "ACTION_MOVE"
+                data[3] = Float.toString(getResources().getConfiguration().orientation);;
+                data[4] = Float.toString(e2.getOrientation(index));
+                data[5] = Float.toString(e2.getX(index));
+                data[6] = Float.toString(e2.getY(index));
+                data[7] = Float.toString(e2.getPressure(index));
+                data[8] = Float.toString(e2.getSize(index));
+                data[9] = Float.toString(mVelocityTracker.getXVelocity(e2.getPointerId(index)));
+                data[10] = Float.toString(mVelocityTracker.getYVelocity(e2.getPointerId(index)));
+                data[11] = Long.toString(id);
+                mTouchData.add(data);
+            }
+            return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent event) { }
+
+        @Override
+        public void onLongPress(MotionEvent event) { }
+        @Override
+        public boolean onSingleTapUp(MotionEvent event) {
+            return true;
+        }
+        @Override
+        public boolean onDoubleTap(MotionEvent event) {
+            String[] data = new String[3];
+            data[2] = "4";  //4 denotes action type "DOUBLE_TAP", Tell when double tap occurs
+            mTouchData.add(data);
+            return true;
+        }
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent event) {
+            return true;
+        }
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event) {
+            String[] data = new String[3];
+            data[2] = "3";  //3 denotes action type "SINGLE_TAP", Tell when single tap occurs
+            mTouchData.add(data);
+            return true;
         }
     }
 

@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     private WebView mWebView;
     private long mLastBackPress;
-    private static final long mBackPressThreshold = 3500;
+    private static final long M_BACK_PRESS_THRESHOLD = 3500;
     private static final String IS_FULLSCREEN_PREF = "is_fullscreen_pref";
     private static boolean DEF_FULLSCREEN = true;
     private long mLastTouch;
@@ -124,7 +124,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
         // If there is a previous instance restore it in the webview
         if (savedInstanceState != null) {
-            // TODO: If app was minimized and Locale language was changed, we need to reload webview with changed language
             mWebView.restoreState(savedInstanceState);
         } else {
             // Load webview with current Locale language
@@ -373,6 +372,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         mWebView.saveState(outState);
     }
 
@@ -422,14 +422,14 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     /**
      * Prevents app from closing on pressing back button accidentally.
-     * mBackPressThreshold specifies the maximum delay (ms) between two consecutive backpress to
+     * M_BACK_PRESS_THRESHOLD specifies the maximum delay (ms) between two consecutive backpress to
      * quit the app.
      */
 
     @Override
     public void onBackPressed() {
         long currentTime = System.currentTimeMillis();
-        if (Math.abs(currentTime - mLastBackPress) > mBackPressThreshold) {
+        if (Math.abs(currentTime - mLastBackPress) > M_BACK_PRESS_THRESHOLD) {
             pressBackToast.show();
             mLastBackPress = currentTime;
         } else {
@@ -440,14 +440,13 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     @Override
     public void onDestroy() {
-        stopService(new Intent(getApplicationContext(), SensorService.class));
+
         super.onDestroy();
     }
 
     @Override
     public void onPause() {
-        SensorService sensorService = new SensorService();
-        sensorService.mSensorManager.unregisterListener(sensorService);
+
         stopService(new Intent(getApplicationContext(), SensorService.class));
         super.onPause();
     }

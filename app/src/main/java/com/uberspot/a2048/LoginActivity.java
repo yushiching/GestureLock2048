@@ -30,8 +30,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import pipi.win.a2048.activity.LockScreenActivity;
+import pipi.win.a2048.activity.TestServiceActivity;
 import pipi.win.a2048.utility.LogUtil;
 
 /**
@@ -77,7 +79,7 @@ public class LoginActivity extends Activity {
         mAgeView = (EditText) findViewById(R.id.age);
 
 
-        SensorService.startService(this);
+
 
         /* Added by Xiaopeng. Check the availability of external storage. */
         boolean isExternalStorageAvailable = isExternalStorageWritable();
@@ -86,15 +88,16 @@ public class LoginActivity extends Activity {
             String touchBaseDir = getAlbumStorageDir(this, "Touch").getAbsolutePath();
             String sensorsBaseDir = getAlbumStorageDir(this, "Sensors").getAbsolutePath();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
             Date now = new Date();
 
             String touchFileName = getUniqueID() + formatter.format(now) + "Touch.csv";
             mTouchFilePath = touchBaseDir + File.separator + touchFileName;
             LogUtil.i(mTouchFilePath);
             String sensorFileName = getUniqueID() + formatter.format(now) + "Sensor.csv";
-            LogUtil.i(sensorFileName);
+
             mSensorFilePath = sensorsBaseDir + File.separator + sensorFileName;
+            LogUtil.i(mSensorFilePath);
         } else {
             Log.e("error msg", "External storage is not available");
         }
@@ -114,10 +117,21 @@ public class LoginActivity extends Activity {
 
 
     @Override
+    public void onPause() {
+
+        SensorService.stopService(getApplicationContext());
+        super.onPause();
+    }
+    @Override
     protected void onDestroy() {
-        SensorService.stopService(this);
         super.onDestroy();
     }
+    @Override
+    public void onResume() {
+        SensorService.startService(getApplicationContext());
+        super.onResume();
+    }
+
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -197,9 +211,17 @@ public class LoginActivity extends Activity {
             mAuthTask = new UserLoginTask(username, age);
             mAuthTask.execute((Void) null);
             //Log.i("FLAG", "Login successful" + " ");
-            //PinEntryActivity.startActivity(this);
-             LockScreenActivity.startActivity(this);
+            startNextStage();
         }
+    }
+
+
+
+    private void startNextStage(){
+        //PinEntryActivity.startActivity(this);
+        //MainActivity.startActivity(this);
+        LockScreenActivity.startActivity(this);
+        //TestServiceActivity.startActivity(this);
     }
 
     private boolean isNameValid(String username) {

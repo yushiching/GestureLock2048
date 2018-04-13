@@ -14,11 +14,14 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.opencsv.CSVWriter;
+import com.orhanobut.logger.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import pipi.win.a2048.utility.LogUtil;
 
 
 /**
@@ -26,7 +29,7 @@ import java.util.List;
  */
 
 public class SensorService extends Service implements SensorEventListener {
-    public static SensorManager mSensorManager = null;
+    public static SensorManager mSensorManager ;
     private ArrayList<String[]> mSensorData = new ArrayList<String[]>();
 
     CSVWriter writer = null;
@@ -34,7 +37,7 @@ public class SensorService extends Service implements SensorEventListener {
     private long laccLastTimestamp = 0;
     private long gyroLastTimestamp = 0;
     private long magLastTimestamp = 0;
-    //private long lightLastTimestamp = 0;
+
 
 
 
@@ -45,12 +48,22 @@ public class SensorService extends Service implements SensorEventListener {
         context.stopService(new Intent(context, SensorService.class));
     }
 
+
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public void onCreate() {
+        super.onCreate();
+        LogUtil.i("SensorService.onCreate");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         registorChosenSensors(mSensorManager, this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        LogUtil.i("SensorService.onStartCMD");
         return START_STICKY;
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,7 +75,7 @@ public class SensorService extends Service implements SensorEventListener {
         // do nothing
     }
 
-    private class SensorEventLoggerTask extends AsyncTask<SensorEvent, Void, Void> {
+    protected class SensorEventLoggerTask extends AsyncTask<SensorEvent, Void, Void> {
         @Override
         protected Void doInBackground(SensorEvent... events) {
             long currentTime = System.currentTimeMillis();
@@ -176,10 +189,10 @@ public class SensorService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        //LogUtil.i("SensorChanged");
         new SensorEventLoggerTask().execute(event);
-        // stop the service
-        //mSensorManager.unregisterListener(this);
-        //stopSelf();
+        //Problems: 异步写入文件会导致潜在乱序的问题，如果线程同步失败的话，合理使用应该是写队列单实例
+
     }
 
     public void registorChosenSensors(SensorManager sensorManager, SensorEventListener listener) {
@@ -212,7 +225,10 @@ public class SensorService extends Service implements SensorEventListener {
     }
 
     public void onDestroy() {
+        super.onDestroy();
+        LogUtil.i("SensorService.onDestroy");
         mSensorManager.unregisterListener(this);
+
     }
 
 }

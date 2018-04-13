@@ -91,7 +91,7 @@ public class PinEntryActivity extends Activity
         setContentView(R.layout.activity_pin);
 
         // Added by Xiaopeng. Start service to listen sensors e.g., accl, gyro and light
-        startService(new Intent(getApplicationContext(), SensorService.class));
+
         // End. Start service to listen sensors e.g., accl, gyro and light
 
         passwordAsked = PINS[randomIndexList.get(PINSIndex)];
@@ -363,22 +363,19 @@ public class PinEntryActivity extends Activity
 
     @Override
     public void onDestroy() {
-        stopService(new Intent(getApplicationContext(), SensorService.class));
+
         super.onDestroy();
     }
 
     @Override
     public void onPause() {
-        SensorService sensorService = new SensorService();
-        sensorService.mSensorManager.unregisterListener(sensorService);
+
         stopService(new Intent(getApplicationContext(), SensorService.class));
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        //SensorService sensorService = new SensorService();
-        //sensorService.registorChosenSensors(sensorService.getmSensorManager(), sensorService);
         startService(new Intent(getApplicationContext(), SensorService.class));
         super.onResume();
     }
