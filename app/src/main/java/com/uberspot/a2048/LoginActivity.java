@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -33,7 +32,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import pipi.win.a2048.activity.LockScreenActivity;
-import pipi.win.a2048.activity.TestServiceActivity;
 import pipi.win.a2048.utility.LogUtil;
 
 /**

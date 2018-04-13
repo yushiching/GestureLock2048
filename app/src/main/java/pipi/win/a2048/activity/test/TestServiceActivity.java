@@ -1,14 +1,15 @@
-package pipi.win.a2048.activity;
+package pipi.win.a2048.activity.test;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.uberspot.a2048.R;
 import com.uberspot.a2048.SensorService;
 
-public class TestServiceActivity extends AppCompatActivity {
+import pipi.win.a2048.activity.base.BaseActivity;
+
+public class TestServiceActivity extends BaseActivity {
 
 
 

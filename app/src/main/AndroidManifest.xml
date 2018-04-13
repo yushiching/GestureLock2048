@@ -49,7 +49,7 @@
 
         </activity>
         <activity android:theme="@style/AppThemeCompat"
-            android:name="pipi.win.a2048.activity.TestServiceActivity">
+            android:name="pipi.win.a2048.activity.test.TestServiceActivity">
 
 
         </activity>
