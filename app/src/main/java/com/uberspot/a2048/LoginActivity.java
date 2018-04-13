@@ -216,9 +216,9 @@ public class LoginActivity extends Activity {
 
 
     private void startNextStage(){
-        //PinEntryActivity.startActivity(this);
+        PinEntryActivity.startActivity(this);
         //MainActivity.startActivity(this);
-        LockScreenActivity.startActivity(this);
+        //LockScreenActivity.startActivity(this);
         //TestServiceActivity.startActivity(this);
     }
 

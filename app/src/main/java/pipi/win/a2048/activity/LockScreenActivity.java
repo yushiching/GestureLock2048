@@ -10,14 +10,12 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.andrognito.rxpatternlockview.RxPatternLockView;
 import com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent;
-import com.opencsv.CSVWriter;
 import com.uberspot.a2048.LoginActivity;
 import com.uberspot.a2048.MainActivity;
 import com.uberspot.a2048.R;
@@ -38,6 +36,7 @@ import static com.andrognito.rxpatternlockview.events.PatternLockCompoundEvent.E
 
 public class LockScreenActivity extends BaseActivity {
 
+    public static final String TAG=LockScreenActivity.class.getSimpleName();
     private static final String DUMMY_TEST_PATTERN = "0124876";
 
     @BindView(R.id.pattern_lock_view)
@@ -90,6 +89,9 @@ public class LockScreenActivity extends BaseActivity {
         addPatternsToShow(Arrays.asList(checkarrays));
     }
 
+    protected LockScreenTouchEvent lockScreenTouchEventListener;
+
+
     protected void initUI() {
         patternInputCheckResIndicator.setImageAlpha(0);
 
@@ -97,7 +99,11 @@ public class LockScreenActivity extends BaseActivity {
         RxPatternLockView.patternChanges(mPatternLockView)
                 .subscribe(new PatternConsumer());
 
-        lockScreenTouchFrame.setOnTouchListener(new LockScreenTouchEvent(this));
+        lockScreenTouchEventListener =new LockScreenTouchEvent(this);
+        lockScreenTouchFrame.setOnTouchListener(lockScreenTouchEventListener);
+
+
+        mPatternLockView.setExternalHookerOnTouch(lockScreenTouchEventListener);
 
 
         //https://stackoverflow.com/questions/21247229/view-ontouchlistener-does-not-work-on-parent-layout
@@ -179,6 +185,8 @@ public class LockScreenActivity extends BaseActivity {
     }
 
 
+
+
     public class LockScreenTouchEvent implements View.OnTouchListener, GestureDetector.OnGestureListener,
             GestureDetector.OnDoubleTapListener {
 
@@ -191,6 +199,7 @@ public class LockScreenActivity extends BaseActivity {
         public LockScreenTouchEvent(Context context) {
             mDetector = new GestureDetectorCompat(context, LockScreenTouchEvent.this);
         }
+
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -234,8 +243,7 @@ public class LockScreenActivity extends BaseActivity {
                     mTouchData.add(data);
 
                     tLog("onTouch: WriteData");
-                    CSVWriter writer = null;
-                    MainActivity.writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+                    MainActivity.writeToFile(null, LoginActivity.mTouchFilePath, mTouchData);
                     mTouchData.clear();
                     mVelocityTracker.clear();
                     break;
@@ -249,8 +257,8 @@ public class LockScreenActivity extends BaseActivity {
             }
             /* End. Detect touch gestures using onTouchEvent and collect touch data. */
 
-            //大坑 https://stackoverflow.com/questions/15799839/motionevent-action-up-not-called
-            return true;
+            //https://stackoverflow.com/questions/15799839/motionevent-action-up-not-called
+            return false;
         }
 
         @Override

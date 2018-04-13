@@ -18,6 +18,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
@@ -431,11 +432,24 @@ public class PatternLockView extends View {
         return super.onHoverEvent(event);
     }
 
+    protected View.OnTouchListener viewOnTouchlistener;
+    public void setExternalHookerOnTouch(View.OnTouchListener ls){
+        viewOnTouchlistener=ls;
+    }
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!mInputEnabled || !isEnabled()) {
             return false;
         }
+
+        Log.i(getClass().getSimpleName(),"OnTouchEvent: "+event);
+
+        if(viewOnTouchlistener!=null){
+            viewOnTouchlistener.onTouch(this,event);
+        }
+
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
