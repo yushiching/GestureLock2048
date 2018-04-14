@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 //import com.baidu.mobstat.StatService;
@@ -87,6 +88,19 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void loge(Throwable e, String msg){
         Logger.t(this.getClass().getSimpleName()).e(e,msg);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                //WARNING:android.R.id   =.=
+                finish();
+                break;
+            default:break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     protected void logi(String msg){

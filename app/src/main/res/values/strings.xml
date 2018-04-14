@@ -20,6 +20,20 @@
         completions."
     </string>
 
+    <string name="switch_preference_login_sersor">switch_preference_login_sersor</string>
+    <string name="switch_preference_pin_sersor">switch_preference_pin_sersor</string>
+    <string name="switch_preference_pin_touch">switch_preference_pin_touch</string>
+    <string name="gen_preference_pin_checklist">switch_preference_pin_checklist</string>
+    <string name="switch_preference_pat_sersor">switch_preference_pat_sersor</string>
+    <string name="switch_preference_pat_touch">switch_preference_pat_touch</string>
+    <string name="gen_preference_pat_checklist">switch_preference_pat_checklist</string>
+
+
+    <string name="sensor_service">Sensor Service</string>
+    <string name="sensor_service_sum">Sernsor Data Background</string>
+    <string name="touch_collection">Touch Collection</string>
+    <string name="touch_collection_sum">Touch Data Background</string>
+
 
 
     <string name="lib_name_rx">RxPatternLockView</string>

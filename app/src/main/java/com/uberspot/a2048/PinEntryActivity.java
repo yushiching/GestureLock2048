@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import pipi.win.a2048.activity.LockScreenActivity;
 
@@ -43,11 +44,11 @@ public class PinEntryActivity extends Activity
     private ArrayList<String[]> mTouchData = new ArrayList<String[]>();
     /* End. Declare some variables. */
 
-    private static final String[] PINS = {"1379", "2548", "156887", "690542"};
+    private String[] PINS = {"1379", "2548", "156887", "690542"};
     int PINSIndex = 0;
     String userEntered;
     String passwordAsked;
-    ArrayList<Integer> randomIndexList = getRandomNum(PINS.length);
+    List<Integer> randomIndexList = getRandomNum(PINS.length);
 
     int countCorrect = 0;
     int countAttempts = 0;
@@ -89,18 +90,18 @@ public class PinEntryActivity extends Activity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_pin);
-
+        passwordView = (TextView) findViewById(R.id.password);
+        statusView = (TextView) findViewById(R.id.statusview);
+        passwordInput = (EditText) findViewById(R.id.editText);
         // Added by Xiaopeng. Start service to listen sensors e.g., accl, gyro and light
 
         // End. Start service to listen sensors e.g., accl, gyro and light
 
         passwordAsked = PINS[randomIndexList.get(PINSIndex)];
-
-        passwordView = (TextView) findViewById(R.id.password);
         passwordView.setText(passwordAsked);
 
-        statusView = (TextView) findViewById(R.id.statusview);
-        passwordInput = (EditText) findViewById(R.id.editText);
+
+
 
         iniDisplay();
 
@@ -312,14 +313,14 @@ public class PinEntryActivity extends Activity
     private class LockKeyPadOperation extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            for (int i = 0; i < 2; i++) {
+            /*for (int i = 0; i < 2; i++) {
                 try {
                     Thread.sleep(600);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
+
                     e.printStackTrace();
                 }
-            }
+            }*/
             return "Executed";
         }
 
@@ -394,7 +395,7 @@ public class PinEntryActivity extends Activity
     public static ArrayList<Integer> getRandomNum(int length) {
         ArrayList<Integer> list = new ArrayList<Integer>();
         for (int i = 0; i < length; i++) {
-            list.add(new Integer(i));
+            list.add(i);
         }
         Collections.shuffle(list);
         return list;

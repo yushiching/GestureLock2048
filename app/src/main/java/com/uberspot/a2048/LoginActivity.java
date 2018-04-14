@@ -19,9 +19,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.opencsv.CSVWriter;
-
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,7 +31,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import pipi.win.a2048.activity.LockScreenActivity;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import pipi.win.a2048.activity.DataCollectSettingActivity;
 import pipi.win.a2048.utility.LogUtil;
 
 /**
@@ -51,31 +54,36 @@ public class LoginActivity extends Activity {
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+
+
+    @BindView(R.id.sign_in_button)
+    Button mSignInButton;
+    @BindView(R.id.imgbt_login_act_settings)
+    ImageButton imgbtLoginActSettings;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserLoginTask mAuthTask;
 
     // UI references.
-    private EditText mAgeView;
-    private EditText mUserNameView;
-    private View mProgressView;
-    private View mLoginFormView;
+    @BindView(R.id.age)
+    EditText mAgeView;
+    @BindView(R.id.username)
+    EditText mUserNameView;
+    View mProgressView;
+    View mLoginFormView;
 
     // Shared variables
     public static String mTouchFilePath = null;
     public static String mSensorFilePath = null;
 
-    private ArrayList<String[]> mUserInfo = new ArrayList<String[]>();
+    private ArrayList<String[]> mUserInfo = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mUserNameView = (EditText) findViewById(R.id.username);
-        mAgeView = (EditText) findViewById(R.id.age);
-
+        ButterKnife.bind(this);
 
 
 
@@ -101,13 +109,6 @@ public class LoginActivity extends Activity {
         }
         /* End. Check the availability of external storage. */
 
-        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
-        mSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -117,16 +118,14 @@ public class LoginActivity extends Activity {
     @Override
     public void onPause() {
 
-        SensorService.stopService(getApplicationContext());
+        //SensorService.stopService(getApplicationContext());
         super.onPause();
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+
     @Override
     public void onResume() {
-        SensorService.startService(getApplicationContext());
+
+        //SensorService.startService(getApplicationContext());
         super.onResume();
     }
 
@@ -136,7 +135,8 @@ public class LoginActivity extends Activity {
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    @OnClick(R.id.sign_in_button)
+    protected void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }
@@ -214,8 +214,12 @@ public class LoginActivity extends Activity {
     }
 
 
+    @OnClick(R.id.imgbt_login_act_settings)
+    protected void configDataCollectSettings() {
+        DataCollectSettingActivity.startActivity(this);
+    }
 
-    private void startNextStage(){
+    private void startNextStage() {
         PinEntryActivity.startActivity(this);
         //MainActivity.startActivity(this);
         //LockScreenActivity.startActivity(this);
@@ -224,7 +228,7 @@ public class LoginActivity extends Activity {
 
     private boolean isNameValid(String username) {
         //TODO: Replace this with your own logic
-        if(username.matches("[ a-zA-Z]*") && username.length() >=2) {
+        if (username.matches("[ a-zA-Z]*") && username.length() >= 2) {
             return true;
         }
         return false;
@@ -232,7 +236,7 @@ public class LoginActivity extends Activity {
 
     private boolean isAgeValid(String age) {
         //TODO: Replace this with your own logic
-        if( Integer.parseInt(age) >= 2 && Integer.parseInt(age) <= 80) {
+        if (Integer.parseInt(age) >= 2 && Integer.parseInt(age) <= 80) {
             return true;
         }
         return false;
@@ -294,7 +298,7 @@ public class LoginActivity extends Activity {
 
             try {
                 // Simulate network access.
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 return false;
             }

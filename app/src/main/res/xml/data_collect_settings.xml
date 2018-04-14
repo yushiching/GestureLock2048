@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Login Activity">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/switch_preference_login_sersor"
+            android:summary="@string/sensor_service_sum"
+            android:title="@string/sensor_service" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="PinEntry Activity">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/switch_preference_pin_sersor"
+            android:summary="@string/sensor_service_sum"
+            android:title="@string/sensor_service" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/switch_preference_pin_touch"
+            android:summary="@string/touch_collection_sum"
+            android:title="@string/touch_collection" />
+        <EditTextPreference
+            android:icon="@drawable/ic_fiber_pin_white_24dp"
+            android:key="@string/gen_preference_pin_checklist"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="pins to check"
+            android:title="Pins" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Pattern Activity">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/switch_preference_pat_sersor"
+            android:summary="@string/sensor_service_sum"
+            android:title="@string/sensor_service"
+            android:visibility="gone" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/switch_preference_pat_touch"
+            android:summary="@string/touch_collection_sum"
+            android:title="@string/touch_collection"
+            android:visibility="gone" />
+        <EditTextPreference
+            android:icon="@drawable/ic_gesture_white_24dp"
+            android:key="@string/gen_preference_pat_checklist"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="pattern to check"
+            android:title="Pattern" />
+    </PreferenceCategory>
+</PreferenceScreen>
