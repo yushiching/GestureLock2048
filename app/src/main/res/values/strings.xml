@@ -27,6 +27,7 @@
     <string name="switch_preference_pat_sersor">switch_preference_pat_sersor</string>
     <string name="switch_preference_pat_touch">switch_preference_pat_touch</string>
     <string name="gen_preference_pat_checklist">switch_preference_pat_checklist</string>
+    <string name="switch_preference_go2048">switch_preference_go2048</string>
 
 
     <string name="sensor_service">Sensor Service</string>

@@ -18,6 +18,12 @@ android {
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "a2048.${variant.name}-${variant.versionName}.apk"
+        }
+    }
     lintOptions {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/switch_preference_go2048"
+        android:summary="Directly go to Activity 2048"
+        android:title="Only 2048"
+        android:visibility="visible" />
     <PreferenceCategory android:title="Login Activity">
 
         <SwitchPreference

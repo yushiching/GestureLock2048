@@ -5,11 +5,13 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -77,6 +79,7 @@ public class LoginActivity extends Activity {
     public static String mTouchFilePath = null;
     public static String mSensorFilePath = null;
 
+    private SharedPreferences preferences;
     private ArrayList<String[]> mUserInfo = new ArrayList<>();
 
     @Override
@@ -85,7 +88,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         /* Added by Xiaopeng. Check the availability of external storage. */
         boolean isExternalStorageAvailable = isExternalStorageWritable();
@@ -220,8 +223,17 @@ public class LoginActivity extends Activity {
     }
 
     private void startNextStage() {
-        PinEntryActivity.startActivity(this);
-        //MainActivity.startActivity(this);
+
+
+        boolean val=preferences.getBoolean(getString(R.string.switch_preference_go2048), false);
+
+        if(val){
+            MainActivity.startActivity(this);
+        }else {
+            PinEntryActivity.startActivity(this);
+        }
+
+        //
         //LockScreenActivity.startActivity(this);
         //TestServiceActivity.startActivity(this);
     }
