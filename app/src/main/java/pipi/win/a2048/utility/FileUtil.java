@@ -4,6 +4,8 @@ import com.opencsv.CSVWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 public class FileUtil {
@@ -13,9 +15,16 @@ public class FileUtil {
         CSVWriter writer;
         try {
             writer = new CSVWriter(new FileWriter(path, true));
-            writer.writeAll(data);writer.close();
+            writer.writeAll(data);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static void writeToBuffer(StringWriter writer, List<String[]> data){
+        CSVWriter csvWriter=new CSVWriter(writer);
+        csvWriter.writeAll(data);
     }
 }

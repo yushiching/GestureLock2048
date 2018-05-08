@@ -31,7 +31,7 @@ import pipi.win.a2048.utility.LogUtil;
 
 public class SensorService extends Service implements SensorEventListener {
     public static SensorManager mSensorManager ;
-    private ArrayList<String[]> mSensorData = new ArrayList<String[]>();
+    private List<String[]> mSensorData = new ArrayList<String[]>();
 
     CSVWriter writer = null;
     private long accLastTimestamp = 0;

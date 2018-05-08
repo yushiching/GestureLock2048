@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     private GestureDetectorCompat mDetector;
     private VelocityTracker mVelocityTracker = null;
 
-    private ArrayList<String[]> mTouchData = new ArrayList<String[]>();
+    private List<String[]> mTouchData = new ArrayList<String[]>();
     /* End. Declare some variables. */
 
     private static final String MAIN_ACTIVITY_TAG = "2048_MainActivity";
