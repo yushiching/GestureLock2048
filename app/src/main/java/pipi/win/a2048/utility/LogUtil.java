@@ -36,10 +36,5 @@ public class LogUtil {
                 .tag("Sen")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
-        /*FormatStrategy diskformatStrategy = CsvFormatStrategy.newBuilder()
-                .tag("MyCC98")
-                .build();
-
-        Logger.addLogAdapter(new DiskLogAdapter(diskformatStrategy));*/
     }
 }

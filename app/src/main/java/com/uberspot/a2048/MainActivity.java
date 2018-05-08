@@ -35,9 +35,11 @@ import com.opencsv.CSVWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import de.cketti.library.changelog.ChangeLog;
+import pipi.win.a2048.utility.FileUtil;
 
 public class MainActivity extends Activity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
@@ -168,8 +170,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
                         data[12] = Long.toString(currentTime);
                         mTouchData.add(data);
 
-                        CSVWriter writer = null;
-                        writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+
+                        FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
                         mTouchData.clear();
                         mVelocityTracker.clear();
                         break;
@@ -345,21 +347,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         Log.d(DEBUG_TAG, "onSingleTapConfirmed toolmajor: " + event.getToolMajor(0));
         Log.d(DEBUG_TAG, "onSingleTapConfirmed touchmajor: " + event.getTouchMajor(0));*/
         return true;
-    }
-
-    /* Write an array list of strings to a specific path */
-    public static void writeToFile(CSVWriter writer, String path, ArrayList<String[]> data) {
-        try {
-            writer = new CSVWriter(new FileWriter(path, true));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        writer.writeAll(data);
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

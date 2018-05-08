@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pipi.win.a2048.utility.FileUtil;
 import pipi.win.a2048.utility.LogUtil;
 
 
@@ -179,7 +180,7 @@ public class SensorService extends Service implements SensorEventListener {
                         break;*/
                 }
             } else {
-                writeToFile(writer, LoginActivity.mSensorFilePath, mSensorData);
+                FileUtil.writeToFile(LoginActivity.mSensorFilePath, mSensorData);
                 mSensorData.clear();
             }
 
@@ -209,20 +210,6 @@ public class SensorService extends Service implements SensorEventListener {
         //sensorManager.registerListener(listener, mLight, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    /* Write an array list of strings to a specific path */
-    public static void writeToFile(CSVWriter writer, String path, List<String[]> data) {
-        try {
-            writer = new CSVWriter(new FileWriter(path, true));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        writer.writeAll(data);
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void onDestroy() {
         super.onDestroy();

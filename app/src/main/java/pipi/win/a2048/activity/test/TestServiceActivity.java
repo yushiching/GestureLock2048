@@ -12,6 +12,7 @@ import pipi.win.a2048.activity.base.BaseActivity;
 public class TestServiceActivity extends BaseActivity {
 
 
+    //To honest, writing test codes in major branch is not a good idea.
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, TestServiceActivity.class));

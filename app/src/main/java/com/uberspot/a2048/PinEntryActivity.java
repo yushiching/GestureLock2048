@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import pipi.win.a2048.activity.LockScreenActivity;
+import pipi.win.a2048.utility.FileUtil;
 
 
 public class PinEntryActivity extends Activity
@@ -128,7 +129,7 @@ public class PinEntryActivity extends Activity
                         data[11] = Long.toString(id);
                         data[12] = Long.toString(currentTime);
                         mTouchData.add(data);
-                        writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+                        FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
                         mTouchData.clear();
                         mVelocityTracker.clear();
 
@@ -183,7 +184,7 @@ public class PinEntryActivity extends Activity
                             userEntered = userEntered + pressedButton.getText();
                             data[0] = userEntered;  //denotes the button that the user just pressed
                             mTouchData.add(data);
-                            writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+                            FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
                             mTouchData.clear();
                             mVelocityTracker.clear();
 
@@ -295,11 +296,9 @@ public class PinEntryActivity extends Activity
 
     @Override
     public void onBackPressed() {
-        // TODO Auto-generated method stub
 
         //App not allowed to go back to Parent activity until correct pin entered.
         return;
-        //super.onBackPressed();
     }
 
     @Override
@@ -422,7 +421,7 @@ public class PinEntryActivity extends Activity
                 data[11] = Long.toString(id);
                 data[12] = Long.toString(currentTime);
                 mTouchData.add(data);
-                writeToFile(writer, LoginActivity.mTouchFilePath, mTouchData);
+                FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
                 mTouchData.clear();
                 mVelocityTracker.clear();
                 break;
@@ -573,20 +572,6 @@ public class PinEntryActivity extends Activity
         mTouchData.add(data);*/
         Log.v("message: ", "single tap confirmed");
         return true;
-    }
-
-    public static void writeToFile(CSVWriter writer, String path, ArrayList<String[]> data) {
-        try {
-            writer = new CSVWriter(new FileWriter(path, true));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        writer.writeAll(data);
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

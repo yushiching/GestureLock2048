@@ -37,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pipi.win.a2048.activity.DataCollectSettingActivity;
+import pipi.win.a2048.utility.FileUtil;
 import pipi.win.a2048.utility.LogUtil;
 
 /**
@@ -57,6 +58,7 @@ public class LoginActivity extends Activity {
             "foo@example.com:hello", "bar@example.com:world"
     };
 
+    private static final String FILENAME_FMT="%s_%s_%s.csv";
 
     @BindView(R.id.sign_in_button)
     Button mSignInButton;
@@ -100,10 +102,10 @@ public class LoginActivity extends Activity {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CHINA);
             Date now = new Date();
 
-            String touchFileName = getUniqueID() + formatter.format(now) + "Touch.csv";
+            String touchFileName =  String.format(Locale.CHINA,FILENAME_FMT,"Touch",formatter.format(now),getUniqueID()) ;
             mTouchFilePath = touchBaseDir + File.separator + touchFileName;
             LogUtil.i(mTouchFilePath);
-            String sensorFileName = getUniqueID() + formatter.format(now) + "Sensor.csv";
+            String sensorFileName = String.format(Locale.CHINA,FILENAME_FMT,"Sensor",formatter.format(now),getUniqueID());
 
             mSensorFilePath = sensorsBaseDir + File.separator + sensorFileName;
             LogUtil.i(mSensorFilePath);
@@ -202,9 +204,8 @@ public class LoginActivity extends Activity {
             userInfo[1] = username;
             userInfo[2] = age;
             mUserInfo.add(userInfo);
-            CSVWriter writer = null;
-            writeToFile(writer, mTouchFilePath, mUserInfo);
-            writeToFile(writer, mSensorFilePath, mUserInfo);
+            FileUtil.writeToFile(mTouchFilePath, mUserInfo);
+            FileUtil.writeToFile(mSensorFilePath, mUserInfo);
 
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
@@ -375,20 +376,6 @@ public class LoginActivity extends Activity {
         return file;
     }
 
-    /* Write an array list of strings to a specific path */
-    public static void writeToFile(CSVWriter writer, String path, ArrayList<String[]> data) {
-        try {
-            writer = new CSVWriter(new FileWriter(path, true));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        writer.writeAll(data);
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 }
 

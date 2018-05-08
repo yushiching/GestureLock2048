@@ -15,6 +15,7 @@ public class ClientFactory {
 
         return iCareInterface;
     }
+
     public static ICareInterface newInterface(){
         return newInterface(ICareInterface.BASE_URL);
     }

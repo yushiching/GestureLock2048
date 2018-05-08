@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 import pipi.win.a2048.activity.base.BaseActivity;
+import pipi.win.a2048.utility.FileUtil;
 import pipi.win.a2048.view.CorrectHintImageView;
 
 import static com.andrognito.patternlockview.PatternLockView.PatternViewMode;
@@ -194,7 +195,7 @@ public class LockScreenActivity extends BaseActivity {
         private long mTouchThreshold = 2000;
         private GestureDetectorCompat mDetector;
         private VelocityTracker mVelocityTracker;
-        private ArrayList<String[]> mTouchData = new ArrayList<>();
+        private List<String[]> mTouchData = new ArrayList<>();
 
         public LockScreenTouchEvent(Context context) {
             mDetector = new GestureDetectorCompat(context, LockScreenTouchEvent.this);
@@ -243,7 +244,7 @@ public class LockScreenActivity extends BaseActivity {
                     mTouchData.add(data);
 
                     tLog("onTouch: WriteData");
-                    MainActivity.writeToFile(null, LoginActivity.mTouchFilePath, mTouchData);
+                    FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
                     mTouchData.clear();
                     mVelocityTracker.clear();
                     break;
