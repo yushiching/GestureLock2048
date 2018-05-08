@@ -75,11 +75,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         // Don't show an action bar or title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        // If on android 3.0+ activate hardware acceleration
-        if (Build.VERSION.SDK_INT >= 11) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                    WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-        }
+
 
         // Apply previous setting about showing status bar or not
         applyFullScreen(isFullScreen());
@@ -105,13 +101,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         setContentView(R.layout.activity_main);
 
         // Added by Xiaopeng. Start service to listen sensors e.g., accl, gyro and light
-        startService(new Intent(getApplicationContext(), SensorService.class));
+        SensorService.startService(this);
         // End. Start service to listen sensors e.g., accl, gyro and light
 
-        ChangeLog cl = new ChangeLog(this);
-        if (cl.isFirstRun()) {
-            //cl.getLogDialog().show();
-        }
 
         // Load webview with game
         mWebView = (WebView) findViewById(R.id.mainWebView);
@@ -393,7 +385,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         // save in preferences
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putBoolean(IS_FULLSCREEN_PREF, isFullScreen);
-        editor.commit();
+        editor.apply();
     }
 
     private boolean isFullScreen() {
