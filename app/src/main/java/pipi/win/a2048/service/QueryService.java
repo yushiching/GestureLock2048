@@ -29,7 +29,7 @@ import retrofit2.Response;
 public class QueryService extends BaseService {
     public static final int BUFFERSIZE=100;
     public static final long[] PATTERN=new long[]{0,300,100,300,100};
-    public static int THREASHOLD=50;
+    public static int THREASHOLD=30;
 
     public QueryService() {
     }
