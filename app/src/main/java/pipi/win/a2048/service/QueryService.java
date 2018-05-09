@@ -21,6 +21,7 @@ import retrofit2.Response;
 
 public class QueryService extends BaseService {
     public static final int BUFFERSIZE=100;
+    public static int THREASHOLD=80;
 
     public QueryService() {
     }
@@ -62,7 +63,8 @@ public class QueryService extends BaseService {
             //thread dead continues;
         }
 
-        if(sensorCnt>100 && touchCnt >100){
+        if(sensorCnt > THREASHOLD &&
+                touchCnt > THREASHOLD){
             LogUtil.i(this.getClass().getSimpleName()+"Launch Network Query");
             queryth=new Thread(new QueryRunnable());
             queryth.start();

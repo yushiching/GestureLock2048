@@ -74,6 +74,12 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         context.startActivity(new Intent(context, MainActivity.class));
     }
 
+    protected QueryService.QueryInit handleq;
+    protected void configQueryService(){
+        handleq=new QueryService.QueryInit();
+        handleq.bindservice(this);
+    }
+
 
     @SuppressLint({"SetJavaScriptEnabled", "NewApi", "ShowToast"})
     @Override
@@ -84,7 +90,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 
-
+        configQueryService();
         // Apply previous setting about showing status bar or not
         applyFullScreen(isFullScreen());
 
@@ -178,6 +184,8 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 
                         FileUtil.writeToFile(LoginActivity.mTouchFilePath,mTouchData);
+                        if(handleq!=null)
+                            handleq.getBind().cacheTouchData(mTouchData);
                         mTouchData.clear();
                         mVelocityTracker.clear();
                         break;
@@ -425,8 +433,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
+        handleq.unbindservice(this);
+        handleq=null;
     }
 
     @Override
