@@ -6,7 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Vibrator;
+import android.support.design.widget.Snackbar;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -22,6 +28,7 @@ import retrofit2.Response;
 
 public class QueryService extends BaseService {
     public static final int BUFFERSIZE=100;
+    public static final long[] PATTERN=new long[]{0,300,100,300,100};
     public static int THREASHOLD=50;
 
     public QueryService() {
@@ -37,7 +44,10 @@ public class QueryService extends BaseService {
     protected Binder binder;
     protected ICareInterface iCareInterface;
 
+    protected String queryType;
     protected Thread queryth;
+
+    protected Vibrator vibrator;
 
 
 
@@ -51,6 +61,7 @@ public class QueryService extends BaseService {
         queryth=new Thread();
         binder=new QueryBind();
         iCareInterface= ClientFactory.newInterface();
+        vibrator=(Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 
 
@@ -84,7 +95,7 @@ public class QueryService extends BaseService {
             String sensordata=sensorWritor.toString();
             String touchdata=touchWritor.toString();
             Response<ResponseBody> queryStatus;
-            String result;
+
             try{
                 Response<String> response=iCareInterface.uploadData(sensordata,touchdata).execute();
                 String qid =response.body();
@@ -96,10 +107,11 @@ public class QueryService extends BaseService {
                         throw new IOException("Time Out");
                     }
                 }while (queryStatus.code()!= 200);
-                result= queryStatus.body().string();
+                queryType= queryStatus.body().string();
 
 
-                LogUtil.i("iCare Result: "+result);
+                showMessage(queryType);
+                LogUtil.i("iCare Result: "+ queryType);
             }catch (IOException e){
                 LogUtil.e(e,"Query IO Failed");
             }catch (InterruptedException e){
@@ -108,7 +120,25 @@ public class QueryService extends BaseService {
             cleanDataZone();
 
 
+
+
         }
+    }
+
+    private void showMessage(final String msg){
+        Handler handler=new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(QueryService.this, msg, Toast.LENGTH_LONG).show();
+
+                if(msg.toLowerCase().startsWith("c")){
+                    vibrator.vibrate(2000);
+                }else {
+                    vibrator.vibrate(PATTERN,-1);
+                }
+            }
+        });
     }
 
 
