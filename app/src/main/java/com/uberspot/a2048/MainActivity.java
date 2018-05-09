@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     }
 
 
-    @SuppressLint({"SetJavaScriptEnabled", "NewApi", "ShowToast"})
+    @SuppressLint({"NewApi", "ShowToast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

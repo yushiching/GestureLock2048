@@ -1,16 +1,18 @@
 package pipi.win.a2048.network;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.*;
 
 public interface ICareInterface {
     String BASE_URL="http://127.0.0.1:5000/";
+    String BASE_URL_SERVER="http://usslabinternal.5pipi.win:5000/";
 
 
     @GET("api/detect/{id}")
-    Call<String> queryID(@Path("id") String id);
+    Call<ResponseBody> queryID(@Path("id") String id);
 
     @GET("api/detect/{id}")
     Observable<String> queryIDRx(@Path("id") String id);

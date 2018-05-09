@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import pipi.win.a2048.network.ClientFactory;
 import pipi.win.a2048.network.ICareInterface;
 import pipi.win.a2048.service.base.BaseService;
@@ -21,7 +22,7 @@ import retrofit2.Response;
 
 public class QueryService extends BaseService {
     public static final int BUFFERSIZE=100;
-    public static int THREASHOLD=80;
+    public static int THREASHOLD=50;
 
     public QueryService() {
     }
@@ -50,6 +51,9 @@ public class QueryService extends BaseService {
         queryth=new Thread();
         binder=new QueryBind();
         iCareInterface= ClientFactory.newInterface();
+
+
+
     }
 
     @Override
@@ -79,28 +83,40 @@ public class QueryService extends BaseService {
 
             String sensordata=sensorWritor.toString();
             String touchdata=touchWritor.toString();
-            Response<String> status;
+            Response<ResponseBody> queryStatus;
             String result;
             try{
                 Response<String> response=iCareInterface.uploadData(sensordata,touchdata).execute();
-                String payload=response.body();
+                String qid =response.body();
                 do{
-                    status=iCareInterface.queryID(payload).execute();
+                    queryStatus =iCareInterface.queryID(qid).execute();
                     Thread.sleep(1000);
                     loopcnt++;
-                    if(loopcnt > 30){
+                    if(loopcnt > 100){
                         throw new IOException("Time Out");
                     }
-                }while (status.code()!= 200);
-                result=status.body();
+                }while (queryStatus.code()!= 200);
+                result= queryStatus.body().string();
+
+
                 LogUtil.i("iCare Result: "+result);
             }catch (IOException e){
                 LogUtil.e(e,"Query IO Failed");
             }catch (InterruptedException e){
                 LogUtil.e(e,"Sleep err");
             }
+            cleanDataZone();
+
 
         }
+    }
+
+
+    private void cleanDataZone(){
+        sensorCnt=0;
+        touchCnt=0;
+        sensorWritor=new StringWriter();
+        touchWritor=new StringWriter();
     }
 
     public static class QueryInit{
@@ -134,6 +150,9 @@ public class QueryService extends BaseService {
     public class QueryBind extends Binder{
         public void cacheSensorData(List<String[]> data){
 
+            if(queryth.isAlive()){
+                return;
+            }
             FileUtil.writeToBuffer(sensorWritor,data);
             sensorCnt++;
             stateChecker();
@@ -142,6 +161,9 @@ public class QueryService extends BaseService {
 
         public void cacheTouchData (List<String[]> data){
 
+            if(queryth.isAlive()){
+                return;
+            }
             FileUtil.writeToBuffer(touchWritor,data);
             touchCnt++;
         }
