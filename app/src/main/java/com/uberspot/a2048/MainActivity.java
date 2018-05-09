@@ -3,13 +3,17 @@ package com.uberspot.a2048;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
@@ -39,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 
 import de.cketti.library.changelog.ChangeLog;
+import pipi.win.a2048.service.QueryService;
 import pipi.win.a2048.utility.FileUtil;
 
 public class MainActivity extends Activity implements GestureDetector.OnGestureListener,
@@ -68,6 +73,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     public static void startActivity(Context context){
         context.startActivity(new Intent(context, MainActivity.class));
     }
+
 
     @SuppressLint({"SetJavaScriptEnabled", "NewApi", "ShowToast"})
     @Override

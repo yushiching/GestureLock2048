@@ -1,8 +1,10 @@
 package com.uberspot.a2048;
 
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pipi.win.a2048.service.QueryService;
+import pipi.win.a2048.service.base.BaseService;
 import pipi.win.a2048.utility.FileUtil;
 import pipi.win.a2048.utility.LogUtil;
 
@@ -29,11 +33,11 @@ import pipi.win.a2048.utility.LogUtil;
  * Created by xiaopeng on 9/6/17.
  */
 
-public class SensorService extends Service implements SensorEventListener {
+public class SensorService extends BaseService implements SensorEventListener {
     public static SensorManager mSensorManager ;
     private List<String[]> mSensorData = new ArrayList<String[]>();
 
-    CSVWriter writer = null;
+
     private long accLastTimestamp = 0;
     private long laccLastTimestamp = 0;
     private long gyroLastTimestamp = 0;
@@ -53,10 +57,19 @@ public class SensorService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.i("SensorService.onCreate");
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         registorChosenSensors(mSensorManager, this);
+
+        configQueryService();
     }
+
+
+    protected QueryService.QueryInit handleq;
+    protected void configQueryService(){
+        handleq=new QueryService.QueryInit();
+        handleq.bindservice(this);
+    }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -181,6 +194,10 @@ public class SensorService extends Service implements SensorEventListener {
                 }
             } else {
                 FileUtil.writeToFile(LoginActivity.mSensorFilePath, mSensorData);
+
+                if(null!=handleq){
+                    handleq.getBind().cacheSensorData(mSensorData);
+                }
                 mSensorData.clear();
             }
 
@@ -213,9 +230,10 @@ public class SensorService extends Service implements SensorEventListener {
 
     public void onDestroy() {
         super.onDestroy();
-        LogUtil.i("SensorService.onDestroy");
         mSensorManager.unregisterListener(this);
 
+        handleq.unbindservice(this);
+        handleq=null;
     }
 
 }

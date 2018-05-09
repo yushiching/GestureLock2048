@@ -57,8 +57,10 @@
 
         <service
             android:name="pipi.win.a2048.service.QueryService"
-            android:enabled="false"
-            android:exported="true"></service>
+            android:enabled="true"
+            android:exported="true">
+
+        </service>
     </application>
 
 </manifest>
